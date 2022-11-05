@@ -1,0 +1,5 @@
+export OTEL_EXPORTER_OTLP_ENDPOINT=https://otlp.nr-data.net:4317
+export OTEL_EXPORTER_OTLP_HEADERS=api-key=ebd28325141a2db1bc1fbf558f57190846f8NRAL
+# export OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT=4095
+
+npm run start:dev
