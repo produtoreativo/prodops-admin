@@ -50,7 +50,7 @@ const url = "https://otlp.nr-data.net:4317/v1/traces";
 const collectorOptions = {
   url,
   headers: {
-   'api-key': "ebd28325141a2db1bc1fbf558f57190846f8NRAL"
+   'api-key': ""
   }
 }
 
