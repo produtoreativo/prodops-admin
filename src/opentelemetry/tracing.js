@@ -46,14 +46,6 @@ const instrumentations = [getNodeAutoInstrumentations()];
 // export OTEL_EXPORTER_OTLP_HEADERS=api-key=<your_license_key_here>
 // export OTEL_ATTRIBUTE_VALUE_LENGTH_LIMIT=4095
 
-const url = "https://otlp.nr-data.net:4317/v1/traces";
-const collectorOptions = {
-  url,
-  headers: {
-   'api-key': "ebd28325141a2db1bc1fbf558f57190846f8NRAL"
-  }
-}
-
 // const traceExporter = new OTLPTraceExporter(collectorOptions);
 const traceExporter = new OTLPTraceExporter();
 
