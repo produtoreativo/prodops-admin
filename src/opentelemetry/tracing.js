@@ -54,7 +54,8 @@ const collectorOptions = {
   }
 }
 
-const traceExporter = new OTLPTraceExporter(collectorOptions);
+// const traceExporter = new OTLPTraceExporter(collectorOptions);
+const traceExporter = new OTLPTraceExporter();
 
 // // Step 4: Configure the OpenTelemetry NodeSDK to export traces.
 const sdk = new opentelemetry.NodeSDK({

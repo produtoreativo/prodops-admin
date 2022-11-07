@@ -9,7 +9,7 @@ exports.config = {
   /**
   * Array of application names.
   */
-  app_name: ['prodops'],
+  app_name: ['prodops-agent'],
   /**
   * Your New Relic license key.
   */
@@ -21,7 +21,7 @@ exports.config = {
     * issues with the agent, 'info' and higher will impose the least overhead on
     * production applications.
     */
-    level: 'info'
+    level: 'trace'
   },
   /**
   * When true, all request headers except for those listed in attributes.exclude
@@ -50,6 +50,16 @@ exports.config = {
       'response.headers.setCookie*',
       'response.headers.x*'
     ]
+  },
+  transaction_tracer: {
+    enabled: true,
+    record_sql: 'raw'
+  },
+  slow_sql: {
+    enabled: true
+  },
+  distributed_tracing: {
+    enabled: true
   }
 }
 

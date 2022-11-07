@@ -1,0 +1,65 @@
+receivers:
+  # syslog:
+  #   tcp:
+  #     listen_address: "0.0.0.0:54527"
+  #   protocol: rfc3164
+  #   location: UTC
+  #   operators:
+  #     - type: move
+  #       from: attributes.message
+  #       to: body
+  filelog/json:
+    include:
+      - /Users/christiano.m.almeida/produtos/prodops-admin/glenio.log
+    include_file_name: false
+    operators:
+      - type: json_parser
+  #       timestamp:
+  #         parse_from: time
+  #         layout_type: gotime
+  #         layout: 2006-01-02T15:04:05Z07:00
+  #       severity:
+  #         parse_from: level
+  # filelog:
+  #   include:
+  #     - /tmp/glenio.log
+  #   operators:
+  #     - type: json_parser
+    #     timestamp:
+    #       parse_from: attributes.time
+    #       layout: '%Y-%m-%d %H:%M:%S'
+  otlp:
+    protocols:
+      grpc:
+      http:
+        cors:
+          allowed_origins:
+            - http://localhost:3000
+            - http://localhost:3001
+
+processors:
+  batch:
+
+exporters:
+  otlp:
+    endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
+    headers:
+      api-key: ${NEW_RELIC_LICENSE_KEY}
+
+service:
+  telemetry:
+    logs:
+      level: "debug"
+  pipelines:
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [otlp]
+    logs:
+      receivers: [otlp, filelog/json]
+      processors: [batch]
+      exporters: [otlp]
