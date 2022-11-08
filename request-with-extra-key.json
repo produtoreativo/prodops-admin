@@ -1,0 +1,75 @@
+{
+  "resourceLogs": [
+    {
+      "resource": {
+        "attributes": [
+          {
+            "key": "service.name",
+            "value": {
+              "stringValue": "prodops-agent24"
+            }
+          },
+          {
+            "key": "trace.id",
+            "value": {
+              "stringValue": "c8acf96afe5ddd68448d6ae4948fee5c"
+            }
+          },
+          {
+            "key": "span.id",
+            "value": {
+              "stringValue": "ff31b9cc82c38021"
+            }
+          },
+          {
+            "key": "trace_id",
+            "value": {
+              "stringValue": "c8acf96afe5ddd68448d6ae4948fee5c"
+            }
+          },
+          {
+            "key": "span_id",
+            "value": {
+              "stringValue": "ff31b9cc82c38021"
+            }
+          }
+        ]
+      },
+      "instrumentationLibraryLogs": [
+        {
+          "instrumentationLibrary": {
+            "name": "manual-test"
+          },
+          "log_records": [
+            {
+              "severityNumber": 9,
+              "severityText": "Info",
+              "body": {
+                "stringValue": "This is a log message 3"
+              },
+              "attributes": [
+                {
+                  "key": "app",
+                  "value": {
+                    "stringValue": "server"
+                  }
+                },
+                {
+                  "key": "instance_num",
+                  "value": {
+                    "intValue": "1"
+                  }
+                }
+              ],
+              "droppedAttributesCount": 1,
+              "traceId": "c8acf96afe5ddd68448d6ae4948fee5c",
+              "spanId": "ff31b9cc82c38021",
+              "trace_id": "b87e549e3e38881d8abcc019017a7f6b",
+              "span_id": "ff31b9cc82c38021"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

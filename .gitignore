@@ -4,6 +4,7 @@
 
 .env
 newrelic.js
+send-log.sh
 
 # Logs
 logs

@@ -1,33 +1,29 @@
 receivers:
-  # syslog:
-  #   tcp:
-  #     listen_address: "0.0.0.0:54527"
-  #   protocol: rfc3164
-  #   location: UTC
-  #   operators:
-  #     - type: move
-  #       from: attributes.message
-  #       to: body
-  filelog/json:
-    include:
-      - /Users/christiano.m.almeida/produtos/prodops-admin/glenio.log
-    include_file_name: false
-    operators:
-      - type: json_parser
-  #       timestamp:
-  #         parse_from: time
-  #         layout_type: gotime
-  #         layout: 2006-01-02T15:04:05Z07:00
-  #       severity:
-  #         parse_from: level
-  # filelog:
-  #   include:
-  #     - /tmp/glenio.log
-  #   operators:
-  #     - type: json_parser
-    #     timestamp:
-    #       parse_from: attributes.time
-    #       layout: '%Y-%m-%d %H:%M:%S'
+  # hostmetrics:
+  #   collection_interval: 20s
+  #   scrapers:
+  #     cpu:
+  #       metrics:
+  #         system.cpu.utilization:
+  #           enabled: true
+  #     load:
+  #     memory:
+  #       metrics:
+  #         system.memory.utilization:
+  #           enabled: true
+  #     disk:
+  #     filesystem:
+  #       metrics:
+  #         system.filesystem.utilization:
+  #           enabled: true
+  #     network:
+  #     paging:
+  #       metrics:
+  #         system.paging.utilization:
+  #           enabled: true
+  #     processes:
+  #     process:
+
   otlp:
     protocols:
       grpc:
@@ -38,28 +34,52 @@ receivers:
             - http://localhost:3001
 
 processors:
+  # memory_limiter:
+  #   check_interval: 1s
+  #   limit_mib: 1000
+  #   spike_limit_mib: 200
   batch:
+  # cumulativetodelta:
+  #   include:
+  #     metrics:
+  #       - system.network.io
+  #       - system.disk.operations
+  #       - system.network.dropped
+  #       - system.network.packets
+  #       - process.cpu.time
+  #     match_type: strict
+  # resource:
+  #   attributes:
+  #     - key: host.id
+  #       from_attribute: host.name
+  #       action: upsert
+  # resourcedetection:
+  #   detectors: [env, system]
 
 exporters:
+  logging:
+    logLevel: debug
   otlp:
     endpoint: ${OTEL_EXPORTER_OTLP_ENDPOINT}
     headers:
       api-key: ${NEW_RELIC_LICENSE_KEY}
 
 service:
-  telemetry:
-    logs:
-      level: "debug"
+  # telemetry:
+  #   logs:
+  #     level: "debug"
   pipelines:
     traces:
       receivers: [otlp]
       processors: [batch]
       exporters: [otlp]
     metrics:
+      # receivers: [otlp, hostmetrics]
+      # processors: [batch, resourcedetection, resource, cumulativetodelta]
       receivers: [otlp]
       processors: [batch]
       exporters: [otlp]
     logs:
-      receivers: [otlp, filelog/json]
+      receivers: [otlp]
       processors: [batch]
-      exporters: [otlp]
+      exporters: [otlp, logging]

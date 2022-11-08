@@ -6,7 +6,7 @@ import { AppService } from './app.service';
 import { LoggerModule } from './logger/logger.module';
 import { ProductModule } from './product/product.module';
 
-// import { OpenTelemetryModule } from 'nestjs-otel';
+import { OpenTelemetryModule } from 'nestjs-otel';
 
 // const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
 //   metrics: {
@@ -17,11 +17,25 @@ import { ProductModule } from './product/product.module';
 //     },
 //   },
 // });
+const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
+  metrics: {
+    hostMetrics: true, // Includes Host Metrics
+    apiMetrics: {
+      enable: true, // Includes api metrics
+      defaultAttributes: {
+        // You can set default labels for api metrics
+        custom: 'label',
+      },
+      ignoreRoutes: ['/favicon.ico'], // You can ignore specific routes (See https://docs.nestjs.com/middleware#excluding-routes for options)
+      ignoreUndefinedRoutes: false, //Records metrics for all URLs, even undefined ones
+    },
+  },
+});
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    // OpenTelemetryModuleConfig,
+    OpenTelemetryModuleConfig,
     LoggerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
