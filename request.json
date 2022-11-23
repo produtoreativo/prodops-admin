@@ -1,0 +1,8 @@
+{
+  "thread.name": "http-nio-8080-exec-1",
+  "log.level": "INFO",
+  "logger.name": "com.newrelic.app.Controller",
+  "message": "A sample log message!",
+  "trace_id": "ee22bdd48f3f77db409cd6430b245589",
+  "span_id": "532acf8de7a8b15c"
+}

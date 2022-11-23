@@ -22,18 +22,18 @@ import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
  
 // api.diag.setLogger(
 //   new DiagConsoleLogger(),
-//   DiagLogLevel.DEBUG,
+//   DiagLogLevel.VERBOSE,
 // );
 
 const resource = new Resource({
   [SemanticResourceAttributes.SERVICE_NAME]: "prodops-agent24",
 })
 
-const exporterOptions = {
-  url: 'http://localhost:4318/v1/traces'
-}
+// const exporterOptions = {
+//   url: 'http://localhost:4318/v1/traces'
+// }
 
-const traceExporter = new OTLPTraceExporter(exporterOptions);
+const traceExporter = new OTLPTraceExporter();
 const provider = new NodeTracerProvider({resource});
 provider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
 // provider.addSpanProcessor(new BatchSpanProcessor(traceExporter, {
@@ -50,7 +50,6 @@ provider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
 // const consoleExporter = new ConsoleSpanExporter();
 // provider.addSpanProcessor(new BatchSpanProcessor(consoleExporter));
 provider.register();
-
 // registerInstrumentations({
 //   instrumentations: [
 //     new PinoInstrumentation({

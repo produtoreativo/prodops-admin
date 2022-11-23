@@ -47,5 +47,5 @@ docker run --rm \
 #   --pid=host \
 #   -v "/:/host:ro" \
 #   -v "/var/run/docker.sock:/var/run/docker.sock" \
-#   -e NRIA_LICENSE_KEY=[LICENSE] \
+#   -e NRIA_LICENSE_KEY=$NEW_RELIC_LICENSE_KEY \
 #   newrelic/infrastructure:latest
