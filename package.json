@@ -41,6 +41,8 @@
     "@opentelemetry/sdk-node": "^0.33.0",
     "@opentelemetry/sdk-trace-node": "^1.7.0",
     "@opentelemetry/semantic-conventions": "^1.7.0",
+    "aws-sdk": "^2.1260.0",
+    "nest-aws-sdk": "^3.0.0",
     "nest-winston": "^1.8.0",
     "nestjs-otel": "^4.1.0",
     "nestjs-pino": "^3.1.1",
