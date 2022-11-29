@@ -36,13 +36,14 @@ export class ScanService {
     });
   }
 
-  async search() {
+  async search(ViewArn: string) {
     return new Promise((resolve, reject) => {
       const params: ResourceExplorer2.SearchInput  = {
         // QueryString: 'AWS::Lambda::Function',
         QueryString: '*',
-        MaxResults: 10,
-        ViewArn: 'arn:aws:resource-explorer-2:us-east-1:268318768905:view/assessment-accenture/3382759c-5661-4046-bd4d-7191559d2dc8', 
+        MaxResults: 100,
+        // NextToken
+        ViewArn, 
       };
       this.res.search(params, function (err, data) {
         console.log('entrou o search', err, data)
