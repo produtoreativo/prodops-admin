@@ -21,11 +21,15 @@ export class ScanService {
       const params: ResourceExplorer2.CreateViewInput  = {
         ViewName: viewDto.name, 
       };
+      //find
+      // if exist return message
+      // else
       this.res.createView(params, function(err, data) {
         console.log('entrou o create'), err, data
         if(err) {
           reject(err);
         } else {
+          //grava no banco
           resolve(data);
         }
       });

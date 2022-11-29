@@ -7,6 +7,11 @@ import { ProductModule } from './product/product.module';
 import { ScanModule } from './scan/scan.module';
 
 // import { OpenTelemetryModule } from 'nestjs-otel';
+import { ProvidersModule } from './providers/providers.module';
+import { OrganizationsModule } from './organizations/organizations.module';
+import { ResourceViewsModule } from './resource-views/resource-views.module';
+import { ScansModule } from './scans/scans.module';
+import { ResourcesModule } from './resources/resources.module';
 
 // const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
 //   metrics: {
@@ -46,8 +51,13 @@ import { ScanModule } from './scan/scan.module';
       synchronize: true,
       logging: true,
     }),
+    OrganizationsModule,
+    ProvidersModule,
     ScanModule,
     ProductModule,
+    ResourceViewsModule,
+    ScansModule,
+    ResourcesModule,
   ],
 })
 export class AppModule {}
