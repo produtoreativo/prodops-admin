@@ -1,13 +1,12 @@
 import winston from 'winston';
-1
-import { createLogger, transports, format } from "winston";
-
+1;
+import { createLogger, transports, format } from 'winston';
 
 const logger = createLogger({
   // level: 'info',
   format: format.combine(
     // format.colorize(),
-    format.json()
+    format.json(),
   ),
   defaultMeta: { service: 'prodops-prod' },
   transports: [new transports.Console()],

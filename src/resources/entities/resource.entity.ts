@@ -1,4 +1,10 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 @Entity('resources')
 export class Resource {
@@ -8,7 +14,7 @@ export class Resource {
   @Column()
   public name: string;
 
-  @Column({ type: 'json' }) 
+  @Column({ type: 'json' })
   public scanContent: JSON;
 
   @Column()
@@ -22,5 +28,4 @@ export class Resource {
 
   @Column()
   public resourceViewId: number;
-
 }

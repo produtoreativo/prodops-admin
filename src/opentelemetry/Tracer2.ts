@@ -1,11 +1,11 @@
-"use strict";
-import { SemanticResourceAttributes } from "@opentelemetry/semantic-conventions";
+'use strict';
+import { SemanticResourceAttributes } from '@opentelemetry/semantic-conventions';
 import { Resource } from '@opentelemetry/resources';
-import { OTLPTraceExporter } from "@opentelemetry/exporter-trace-otlp-proto";
+import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 import { v4 as uuidv4 } from 'uuid';
-import opentelemetry from "@opentelemetry/sdk-node";
+import opentelemetry from '@opentelemetry/sdk-node';
 import process from 'process';
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
+import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
 
 // const { v4: uuidv4 } = require("uuid");
 // const process = require("process");
@@ -26,7 +26,7 @@ import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentation
 // );
 
 const resource = new Resource({
-  [SemanticResourceAttributes.SERVICE_NAME]: "prodops-prod2",
+  [SemanticResourceAttributes.SERVICE_NAME]: 'prodops-prod2',
   [SemanticResourceAttributes.SERVICE_INSTANCE_ID]: uuidv4(),
 });
 
@@ -45,14 +45,14 @@ const sdk = new opentelemetry.NodeSDK({
 //    this enables the API to record telemetry
 sdk
   .start()
-  .then(() => console.log("Tracing initialized"))
-  .catch((error) => console.log("Error initializing tracing", error));
+  .then(() => console.log('Tracing initialized'))
+  .catch((error) => console.log('Error initializing tracing', error));
 
 // Step 6: Gracefully shut down the SDK on process exit
-process.on("SIGTERM", () => {
+process.on('SIGTERM', () => {
   sdk
     .shutdown()
-    .then(() => console.log("Tracing terminated"))
-    .catch((error) => console.log("Error terminating tracing", error))
+    .then(() => console.log('Tracing terminated'))
+    .catch((error) => console.log('Error terminating tracing', error))
     .finally(() => process.exit(0));
 });

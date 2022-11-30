@@ -5,10 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Scan } from './entities/scan.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Scan])
-  ],
+  imports: [TypeOrmModule.forFeature([Scan])],
   controllers: [ScansController],
-  providers: [ScansService]
+  providers: [ScansService],
 })
 export class ScansModule {}

@@ -14,5 +14,4 @@ export class Scan {
 
   @ManyToOne(() => ResourceView, (resourceView) => resourceView.scans)
   resourceView: ResourceView;
-
 }

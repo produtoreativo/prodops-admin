@@ -7,53 +7,40 @@ import ViewDto from './view.dto';
 export class ScanService {
   constructor(
     @InjectAwsService(S3) private readonly s3: S3,
-    @InjectAwsService(ResourceExplorer2) private readonly res: ResourceExplorer2,
-  ) {
-  }
+    @InjectAwsService(ResourceExplorer2)
+    private readonly res: ResourceExplorer2,
+  ) {}
 
   async listBucketContents(bucket: string) {
     const response = await this.s3.listObjectsV2({ Bucket: bucket }).promise();
-    return response.Contents.map(c => c.Key);
+    return response.Contents.map((c) => c.Key);
   }
 
   async createView(viewDto: ViewDto) {
-    return new Promise((resolve, reject) => {
-      const params: ResourceExplorer2.CreateViewInput  = {
-        ViewName: viewDto.name, 
-      };
-      //find
-      // if exist return message
-      // else
-      this.res.createView(params, function(err, data) {
-        console.log('entrou o create'), err, data
-        if(err) {
-          reject(err);
-        } else {
-          //grava no banco
-          resolve(data);
-        }
-      });
-    });
+    const params: ResourceExplorer2.CreateViewInput = {
+      ViewName: viewDto.name,
+    };
+    const response = await this.res.createView(params).promise();
+    const { ViewArn } = response.View;
+    return ViewArn;
   }
 
   async search(ViewArn: string) {
-    return new Promise((resolve, reject) => {
-      const params: ResourceExplorer2.SearchInput  = {
-        // QueryString: 'AWS::Lambda::Function',
-        QueryString: '*',
-        MaxResults: 100,
-        // NextToken
-        ViewArn, 
-      };
-      this.res.search(params, function (err, data) {
-        console.log('entrou o search', err, data)
-        if(err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      })
-    });
-  }
+    const params: ResourceExplorer2.SearchInput = {
+      QueryString: '*',
+      MaxResults: 50,
+      ViewArn,
+    };
+    const resources = [];
+    let response = await this.res.search(params).promise();
+    resources.push(...response.Resources);
 
+    while ('NextToken' in response) {
+      params.NextToken = response.NextToken;
+      response = await this.res.search(params).promise();
+      resources.push(...response.Resources);
+    }
+
+    return resources;
+  }
 }

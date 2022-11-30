@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Query } from '@nestjs/common';
 import { ScanService } from './scan.service';
 import ViewDto from './view.dto';
 
@@ -12,13 +12,12 @@ export class ScanController {
   }
 
   @Get()
-  searchAll() {
-    return this.scanService.search();
+  searchAll(@Query('arn') arn: string) {
+    return this.scanService.search(arn);
   }
 
   @Post('create-view')
   createView(@Body() viewDto: ViewDto) {
     return this.scanService.createView(viewDto);
   }
-
 }

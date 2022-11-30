@@ -5,11 +5,10 @@ import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 export class Organization {
   @PrimaryGeneratedColumn()
   public id: number;
- 
+
   @Column()
   public name: string;
 
   @OneToMany(() => Provider, (provider) => provider.organization)
-  providers: Provider[]
- 
+  providers: Provider[];
 }

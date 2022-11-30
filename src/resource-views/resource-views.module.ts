@@ -5,10 +5,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ResourceView } from './entities/resource-view.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([ResourceView])
-  ],
+  imports: [TypeOrmModule.forFeature([ResourceView])],
   controllers: [ResourceViewsController],
-  providers: [ResourceViewsService]
+  providers: [ResourceViewsService],
 })
 export class ResourceViewsModule {}

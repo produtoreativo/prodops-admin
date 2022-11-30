@@ -1,28 +1,30 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Organization } from 'src/organizations/entities/organization.entity';
 import { ResourceView } from 'src/resource-views/entities/resource-view.entity';
 
 @Entity('providers')
 export class Provider {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
 
   @Column()
-  public name: string;
+  name: string;
 
-  @Column()
-  public content: string;
+  @Column({ nullable: true })
+  content: string;
 
-  @Column({ type: 'json' }) 
-  public credentials: JSON;
-
-  @Column()
-  public organizationId: number;
+  @Column({ type: 'json' })
+  credentials: Record<string, any>;
 
   @ManyToOne(() => Organization, (org) => org.providers)
   organization: Organization;
 
   @OneToMany(() => ResourceView, (resourceView) => resourceView.provider)
-  resourceViews: ResourceView[]
-
+  resourceViews: ResourceView[];
 }
