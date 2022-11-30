@@ -11,13 +11,13 @@ import {
 @Entity('resource-views')
 export class ResourceView {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
 
   @Column()
-  public name: string;
+  name: string;
 
   @Column()
-  public arn: string;
+  arn: string;
 
   @ManyToOne(() => Provider, (prov) => prov.resourceViews)
   provider: Provider;

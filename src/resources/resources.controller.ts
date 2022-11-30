@@ -10,7 +10,9 @@ import {
 import { ResourcesService } from './resources.service';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Resources')
 @Controller('resources')
 export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
@@ -30,6 +32,7 @@ export class ResourcesController {
     return this.resourcesService.findOne(+id);
   }
 
+  @ApiExcludeEndpoint()
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -38,6 +41,7 @@ export class ResourcesController {
     return this.resourcesService.update(+id, updateResourceDto);
   }
 
+  @ApiExcludeEndpoint()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.resourcesService.remove(+id);

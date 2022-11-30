@@ -1,19 +1,42 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 import { CreateResourceDto } from './dto/create-resource.dto';
 import { UpdateResourceDto } from './dto/update-resource.dto';
+import { Resource } from './entities/resource.entity';
 
 @Injectable()
 export class ResourcesService {
-  create(createResourceDto: CreateResourceDto) {
-    return 'This action adds a new resource';
+  constructor(
+    @InjectRepository(Resource)
+    private readonly resourceRepository: Repository<Resource>,
+  ) {}
+
+  async create(createResourceDto: CreateResourceDto) {
+    const newResource = this.resourceRepository.create({
+      name: createResourceDto.name,
+      organization: { id: createResourceDto.organizationId },
+      provider: { id: createResourceDto.providerId },
+      resourceView: { id: createResourceDto.resourceViewId },
+      scan: { id: createResourceDto.scanId },
+      scanContent: createResourceDto.scanContent,
+    });
+    return this.resourceRepository.save(newResource);
   }
 
-  findAll() {
-    return `This action returns all resources`;
+  async findAll() {
+    return this.resourceRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} resource`;
+  async findOne(id: number) {
+    const resource = await this.resourceRepository.findOne({
+      relations: ['organization', 'provider', 'resourceView', 'scan'],
+      where: { id },
+    });
+    if (!resource) {
+      throw new NotFoundException();
+    }
+    return resource;
   }
 
   update(id: number, updateResourceDto: UpdateResourceDto) {

@@ -10,7 +10,9 @@ import {
 import { ResourceViewsService } from './resource-views.service';
 import { CreateResourceViewDto } from './dto/create-resource-view.dto';
 import { UpdateResourceViewDto } from './dto/update-resource-view.dto';
+import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('ResourceViews')
 @Controller('resource-views')
 export class ResourceViewsController {
   constructor(private readonly resourceViewsService: ResourceViewsService) {}
@@ -25,11 +27,13 @@ export class ResourceViewsController {
     return this.resourceViewsService.findAll();
   }
 
+  @ApiExcludeEndpoint()
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.resourceViewsService.findOne(+id);
   }
 
+  @ApiExcludeEndpoint()
   @Patch(':id')
   update(
     @Param('id') id: string,
@@ -37,7 +41,7 @@ export class ResourceViewsController {
   ) {
     return this.resourceViewsService.update(+id, updateResourceViewDto);
   }
-
+  @ApiExcludeEndpoint()
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.resourceViewsService.remove(+id);

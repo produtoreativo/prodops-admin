@@ -1,5 +1,6 @@
 import { Provider } from 'src/providers/entities/provider.entity';
 import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Resource } from '../../resources/entities/resource.entity';
 
 @Entity('organizations')
 export class Organization {
@@ -11,4 +12,7 @@ export class Organization {
 
   @OneToMany(() => Provider, (provider) => provider.organization)
   providers: Provider[];
+
+  @OneToMany(() => Resource, (resource) => resource.organization)
+  resources: Resource[];
 }

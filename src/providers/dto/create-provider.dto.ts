@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, ValidateNested } from 'class-validator';
 import { CredentialsDto } from './credentials.dto';
 
 export class CreateProviderDto {
@@ -20,5 +20,6 @@ export class CreateProviderDto {
 
   @IsNotEmpty()
   @ApiProperty()
+  @IsInt()
   organizationId: number;
 }

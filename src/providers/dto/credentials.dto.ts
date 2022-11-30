@@ -4,13 +4,13 @@ import { IsNotEmpty } from 'class-validator';
 export class CredentialsDto {
   @IsNotEmpty()
   @ApiProperty()
-  AWS_REGION: string;
+  region: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  AWS_ACCESS_KEY_ID: string;
+  accessKeyId: string;
 
   @IsNotEmpty()
   @ApiProperty()
-  AWS_SECRET_ACCESS_KEY: string;
+  secretAccessKey: string;
 }
