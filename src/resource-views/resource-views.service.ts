@@ -55,6 +55,11 @@ export class ResourceViewsService {
   async findOne(id: number) {
     const resourceView = await this.resourceViewRepository.findOne({
       where: { id },
+      relations: {
+        provider: true,
+        resources: true,
+        scans: true,
+      },
     });
     if (!resourceView) {
       throw new NotFoundException();
@@ -63,8 +68,20 @@ export class ResourceViewsService {
     return resourceView;
   }
 
-  update(id: number, updateResourceViewDto: UpdateResourceViewDto) {
-    return `This action updates a #${id} resourceView`;
+  async update(id: number, updateResourceViewDto: UpdateResourceViewDto) {
+    const { resources, ...others } = updateResourceViewDto;
+    let resourceView = await this.findOne(id);
+    resourceView = { ...resourceView, ...others };
+    if (resources) {
+      const newResources = new Set(resourceView.resources.map((res) => res.id));
+      resources.forEach((res) => newResources.add(res));
+      const newResourcesArray = [];
+      for (const id of newResources.values()) {
+        newResourcesArray.push({ id });
+      }
+      resourceView.resources = newResourcesArray;
+    }
+    return this.resourceViewRepository.save(resourceView);
   }
 
   remove(id: number) {

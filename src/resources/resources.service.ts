@@ -17,8 +17,6 @@ export class ResourcesService {
       name: createResourceDto.name,
       organization: { id: createResourceDto.organizationId },
       provider: { id: createResourceDto.providerId },
-      resourceView: { id: createResourceDto.resourceViewId },
-      scan: { id: createResourceDto.scanId },
       scanContent: createResourceDto.scanContent,
     });
     return this.resourceRepository.save(newResource);
@@ -30,7 +28,13 @@ export class ResourcesService {
 
   async findOne(id: number) {
     const resource = await this.resourceRepository.findOne({
-      relations: ['organization', 'provider', 'resourceView', 'scan'],
+      // relations: ['organization', 'provider', 'resourceViews', 'scans'],
+      relations: {
+        organization: true,
+        provider: true,
+        resourceViews: true,
+        scans: true,
+      },
       where: { id },
     });
     if (!resource) {

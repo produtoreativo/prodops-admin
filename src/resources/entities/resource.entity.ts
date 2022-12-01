@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -29,11 +30,11 @@ export class Resource {
   @ManyToOne(() => Provider, (prov) => prov.resources)
   provider: Provider;
 
-  @OneToOne(() => Scan)
-  @JoinColumn()
-  scan: Scan;
+  // bi-directional relations
 
-  @OneToOne(() => ResourceView)
-  @JoinColumn()
-  resourceView: ResourceView;
+  @ManyToMany(() => Scan, (scan) => scan.resources)
+  scans: Scan[];
+
+  @ManyToMany(() => ResourceView, (resourceView) => resourceView.resources)
+  resourceViews: ResourceView[];
 }

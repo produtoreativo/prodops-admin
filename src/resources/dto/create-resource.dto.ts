@@ -23,10 +23,5 @@ export class CreateResourceDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsInt()
-  scanId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsInt()
   resourceViewId: number;
 }

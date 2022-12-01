@@ -7,6 +7,7 @@ import { AwsSdkModule } from 'nest-aws-sdk';
 import { ResourceExplorer2 } from 'aws-sdk';
 import { ProvidersModule } from '../providers/providers.module';
 import { ResourceViewsModule } from '../resource-views/resource-views.module';
+import { ResourcesModule } from '../resources/resources.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { ResourceViewsModule } from '../resource-views/resource-views.module';
     AwsSdkModule.forFeatures([ResourceExplorer2]),
     ResourceViewsModule,
     ProvidersModule,
+    ResourcesModule,
   ],
   controllers: [ScansController],
   providers: [ScansService],
