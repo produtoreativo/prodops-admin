@@ -30,7 +30,7 @@ export class ProductsService {
   }
 
   async findOne(id: number) {
-    const product = await this.productsRepository.findOneBy({ id });
+    const product = await this.productsRepository.findOne({ id });
     //capturar este evento
     this.logger.warn('******************************************');
     // console.warn('******************************************');

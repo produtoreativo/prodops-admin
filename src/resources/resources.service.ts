@@ -28,13 +28,7 @@ export class ResourcesService {
 
   async findOne(id: number) {
     const resource = await this.resourceRepository.findOne({
-      // relations: ['organization', 'provider', 'resourceViews', 'scans'],
-      relations: {
-        organization: true,
-        provider: true,
-        resourceViews: true,
-        scans: true,
-      },
+      relations: ['organization', 'provider', 'resourceViews', 'scans'],
       where: { id },
     });
     if (!resource) {

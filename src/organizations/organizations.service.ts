@@ -23,7 +23,7 @@ export class OrganizationsService {
   }
 
   async findOne(id: number) {
-    const organization = await this.organizationRepository.findOneBy({ id });
+    const organization = await this.organizationRepository.findOne({ id });
     if (!organization) {
       throw new NotFoundException();
     }

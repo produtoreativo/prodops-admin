@@ -55,11 +55,7 @@ export class ResourceViewsService {
   async findOne(id: number) {
     const resourceView = await this.resourceViewRepository.findOne({
       where: { id },
-      relations: {
-        provider: true,
-        resources: true,
-        scans: true,
-      },
+      relations: ['provider', 'resources', 'scans'],
     });
     if (!resourceView) {
       throw new NotFoundException();
