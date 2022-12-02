@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectAwsService } from 'nest-aws-sdk';
-import { S3, ResourceExplorer2 } from 'aws-sdk';
+import { S3, ResourceExplorer2, ElastiCache, ElasticBeanstalk } from 'aws-sdk';
 import ViewDto from './view.dto';
 
 @Injectable()
@@ -9,11 +9,20 @@ export class ScanService {
     @InjectAwsService(S3) private readonly s3: S3,
     @InjectAwsService(ResourceExplorer2)
     private readonly res: ResourceExplorer2,
+    @InjectAwsService(ElastiCache)
+    private readonly ec: ElastiCache,
+    @InjectAwsService(ElasticBeanstalk)
+    private readonly ebs: ElasticBeanstalk,
   ) {}
 
   async listBucketContents(bucket: string) {
     const response = await this.s3.listObjectsV2({ Bucket: bucket }).promise();
     return response.Contents.map((c) => c.Key);
+  }
+
+  async listBuckets() {
+    const response = await this.s3.listBuckets().promise();
+    return response.Buckets;
   }
 
   async createView(viewDto: ViewDto) {
@@ -42,5 +51,13 @@ export class ScanService {
     }
 
     return resources;
+  }
+  async listElasticCache() {
+    const { CacheClusters } = await this.ec.describeCacheClusters().promise();
+    return CacheClusters;
+  }
+  async listElasticBeanstalk() {
+    const { Applications } = await this.ebs.describeApplications().promise();
+    return Applications;
   }
 }

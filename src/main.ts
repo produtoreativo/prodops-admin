@@ -6,13 +6,20 @@ import { Logger } from 'nestjs-pino';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { WinstonModule } from 'nest-winston';
+import * as winston from 'winston';
 
 // import otelSDK from './opentelemetry/tracing2';
 
 async function bootstrap() {
   // otelSDK.start().then(async function() {
   // console.log("Carregou o optel")
-  const app = await NestFactory.create(AppModule, {});
+  const app = await NestFactory.create(AppModule, {
+    // logger: WinstonModule.createLogger({
+    //   format: winston.format.json(),
+    //   transports: [new winston.transports.Console()],
+    // }),
+  });
   // app.useLogger(app.get(Logger));
   const configService = app.get(ConfigService);
   SwaggerModule.setup(

@@ -27,8 +27,4 @@ export class ResourceView {
 
   @OneToMany(() => Scan, (scan) => scan.resourceView)
   scans: Scan[];
-
-  @ManyToMany(() => Resource, (resource) => resource.resourceViews)
-  @JoinTable({ name: 'resources_views_has_resources' })
-  resources: Resource[];
 }
