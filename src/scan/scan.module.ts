@@ -8,7 +8,6 @@ import { ScanService } from './scan.service';
   imports: [
     AwsSdkModule.forFeatures([S3]),
     AwsSdkModule.forFeatures([ResourceExplorer2]),
-    
   ],
   controllers: [ScanController],
   providers: [ScanService],

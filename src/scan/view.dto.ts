@@ -1,3 +1,8 @@
+import { Transform, TransformFnParams } from 'class-transformer';
+import { IsNotEmpty } from 'class-validator';
+
 export default class ViewDto {
-  name: string
+  @IsNotEmpty()
+  @Transform(({ value }: TransformFnParams) => value?.trim())
+  name: string;
 }

@@ -3,7 +3,7 @@ import { AwsSdkModule } from 'nest-aws-sdk';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LoggerModule } from './logger/logger.module';
-import { ProductModule } from './product/product.module';
+import { ProductsModule } from './products/products.module';
 import { ScanModule } from './scan/scan.module';
 
 // import { OpenTelemetryModule } from 'nestjs-otel';
@@ -38,9 +38,9 @@ import { ResourcesModule } from './resources/resources.module';
           credentials: {
             accessKeyId: process.env.AWS_ACCESS_KEY_ID,
             secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-          }
-        }
-      }
+          },
+        },
+      },
     }),
     // OpenTelemetryModuleConfig,
     LoggerModule,
@@ -54,7 +54,7 @@ import { ResourcesModule } from './resources/resources.module';
     OrganizationsModule,
     ProvidersModule,
     ScanModule,
-    ProductModule,
+    ProductsModule,
     ResourceViewsModule,
     ScansModule,
     ResourcesModule,

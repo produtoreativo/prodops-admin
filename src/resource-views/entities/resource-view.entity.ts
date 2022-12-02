@@ -1,20 +1,26 @@
 import { Provider } from 'src/providers/entities/provider.entity';
 import { Scan } from 'src/scans/entities/scan.entity';
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Resource } from '../../resources/entities/resource.entity';
 
 @Entity('resource-views')
 export class ResourceView {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
 
   @Column()
-  public name: string;
+  name: string;
 
   @Column()
-  public arn: string;
-
-  @Column()
-  public providerId: number;
+  arn: string;
 
   @ManyToOne(() => Provider, (prov) => prov.resourceViews)
   provider: Provider;
@@ -22,4 +28,7 @@ export class ResourceView {
   @OneToMany(() => Scan, (scan) => scan.resourceView)
   scans: Scan[];
 
+  @ManyToMany(() => Resource, (resource) => resource.resourceViews)
+  @JoinTable({ name: 'resources_views_has_resources' })
+  resources: Resource[];
 }

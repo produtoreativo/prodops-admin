@@ -2,7 +2,7 @@ import Pino, { Logger, transport } from 'pino';
 import { LoggerOptions, destination } from 'pino';
 import { trace, context } from '@opentelemetry/api';
 
-console.log('destination', process.env.LOG_FILE_NAME)
+console.log('destination', process.env.LOG_FILE_NAME);
 
 export const loggerOptions: LoggerOptions = {
   level: 'trace',
@@ -35,23 +35,23 @@ export const loggerOptions: LoggerOptions = {
         .getSpan(context.active())
         ?.spanContext();
       // span.id, trace.id, hostname, entity.guid, and entity.name
-      return { 
-        ...object, 
-        // spanId, 
+      return {
+        ...object,
+        // spanId,
         // traceId,
-        TraceId:  traceId,
+        TraceId: traceId,
         SpanId: spanId,
         TraceFlags: traceFlags,
-        'trace_id':  traceId,
-        'span_id': spanId,
-        'trace_flags': traceFlags,
-        'trace.id':  traceId,
+        trace_id: traceId,
+        span_id: spanId,
+        trace_flags: traceFlags,
+        'trace.id': traceId,
         'span.id': spanId,
         'trace.flags': traceFlags,
       };
     },
   },
-  // prettifier: 
+  // prettifier:
   // // prettyPrint:
   //   process.env.NODE_ENV === 'local'
   //     ? {

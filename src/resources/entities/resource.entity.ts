@@ -1,26 +1,40 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Organization } from '../../organizations/entities/organization.entity';
+import { Provider } from '../../providers/entities/provider.entity';
+import { ResourceView } from '../../resource-views/entities/resource-view.entity';
+import { Scan } from '../../scans/entities/scan.entity';
 
 @Entity('resources')
 export class Resource {
   @PrimaryGeneratedColumn()
-  public id: number;
+  id: number;
 
   @Column()
-  public name: string;
+  name: string;
 
-  @Column({ type: 'json' }) 
-  public scanContent: JSON;
+  @Column({ type: 'json' })
+  scanContent: Record<string, any>;
 
-  @Column()
-  public organizationId: number;
+  @ManyToOne(() => Organization, (org) => org.resources)
+  organization: Organization;
 
-  @Column()
-  public scanId: number;
+  @ManyToOne(() => Provider, (prov) => prov.resources)
+  provider: Provider;
 
-  @Column()
-  public providerId: number;
+  // bi-directional relations
 
-  @Column()
-  public resourceViewId: number;
+  @ManyToMany(() => Scan, (scan) => scan.resources)
+  scans: Scan[];
 
+  @ManyToMany(() => ResourceView, (resourceView) => resourceView.resources)
+  resourceViews: ResourceView[];
 }

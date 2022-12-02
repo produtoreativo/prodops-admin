@@ -3,7 +3,11 @@ import {
   W3CTraceContextPropagator,
   W3CBaggagePropagator,
 } from '@opentelemetry/core';
-import { SimpleSpanProcessor, ConsoleSpanExporter, BatchSpanProcessor } from '@opentelemetry/sdk-trace-base';
+import {
+  SimpleSpanProcessor,
+  ConsoleSpanExporter,
+  BatchSpanProcessor,
+} from '@opentelemetry/sdk-trace-base';
 // const { SimpleSpanProcessor } = require('@opentelemetry/sdk-trace-base');
 // import { JaegerExporter } from '@opentelemetry/exporter-jaeger';
 import { getNodeAutoInstrumentations } from '@opentelemetry/auto-instrumentations-node';
@@ -12,30 +16,32 @@ import { B3InjectEncoding, B3Propagator } from '@opentelemetry/propagator-b3';
 import { NodeSDK } from '@opentelemetry/sdk-node';
 import { AsyncLocalStorageContextManager } from '@opentelemetry/context-async-hooks';
 import * as process from 'process';
-import { Resource } from "@opentelemetry/resources";
-const { SemanticResourceAttributes } = require("@opentelemetry/semantic-conventions");
+import { Resource } from '@opentelemetry/resources';
+const {
+  SemanticResourceAttributes,
+} = require('@opentelemetry/semantic-conventions');
 import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-proto';
 import { NodeTracerProvider } from '@opentelemetry/sdk-trace-node';
 
 // import { registerInstrumentations } from '@opentelemetry/instrumentation';
 // import api, { DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
- 
+
 // api.diag.setLogger(
 //   new DiagConsoleLogger(),
 //   DiagLogLevel.VERBOSE,
 // );
 
 const resource = new Resource({
-  [SemanticResourceAttributes.SERVICE_NAME]: "prodops-agent24",
-})
+  [SemanticResourceAttributes.SERVICE_NAME]: 'prodops-agent24',
+});
 
 // const exporterOptions = {
 //   url: 'http://localhost:4318/v1/traces'
 // }
 
 const traceExporter = new OTLPTraceExporter();
-const provider = new NodeTracerProvider({resource});
-provider.addSpanProcessor(new SimpleSpanProcessor(traceExporter))
+const provider = new NodeTracerProvider({ resource });
+provider.addSpanProcessor(new SimpleSpanProcessor(traceExporter));
 // provider.addSpanProcessor(new BatchSpanProcessor(traceExporter, {
 //   // The maximum queue size. After the size is reached spans are dropped.
 //   maxQueueSize: 100,
@@ -63,7 +69,7 @@ provider.register();
 // });
 
 const otelSDK = new NodeSDK({
-  resource, 
+  resource,
   // metricExporter: new PrometheusExporter({
   //   port: 8081,
   // }),
@@ -83,9 +89,7 @@ const otelSDK = new NodeSDK({
       }),
     ],
   }),
-  instrumentations: [
-    getNodeAutoInstrumentations(),
-  ],
+  instrumentations: [getNodeAutoInstrumentations()],
 });
 
 // You can also use the shutdown method to gracefully shut down the SDK before process shutdown
@@ -95,7 +99,7 @@ process.on('SIGTERM', () => {
     .shutdown()
     .then(
       () => console.log('SDK shut down successfully'),
-      err => console.log('Error shutting down SDK', err)
+      (err) => console.log('Error shutting down SDK', err),
     )
     .finally(() => process.exit(0));
 });

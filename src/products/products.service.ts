@@ -8,16 +8,15 @@ import { Product } from './entities/product.entity';
 import { Logger } from '@nestjs/common';
 // import { PinoLogger, InjectPinoLogger } from 'nestjs-pino';
 @Injectable()
-export class ProductService {
+export class ProductsService {
   constructor(
     @InjectRepository(Product)
-    private productsRepository: Repository<Product>,
-    // @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
+    private productsRepository: Repository<Product>, // @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger
   ) {
     // this.logger.setContext(ProductService.name);
   }
 
-  private readonly logger = new Logger(ProductService.name);
+  private readonly logger = new Logger(ProductsService.name);
 
   async create(createProductDto: CreateProductDto) {
     const product = await this.productsRepository.save(createProductDto);
@@ -27,11 +26,11 @@ export class ProductService {
   }
 
   findAll() {
-    throw new Error('Erro provocado')
+    throw new Error('Erro provocado');
   }
 
   async findOne(id: number) {
-    const product = await this.productsRepository.findOneBy({ id });
+    const product = await this.productsRepository.findOne({ id });
     //capturar este evento
     this.logger.warn('******************************************');
     // console.warn('******************************************');
