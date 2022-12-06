@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ResourceExplorer2 } from 'aws-sdk';
+import { ElastiCache, ElasticBeanstalk, ResourceExplorer2 } from 'aws-sdk';
 import { InjectAwsService } from 'nest-aws-sdk';
 import { Repository } from 'typeorm';
 import { Credentials } from '../providers/credentials.type';
 import { ProvidersService } from '../providers/providers.service';
+import { ResourceView } from '../resource-views/entities/resource-view.entity';
 import { ResourceViewsService } from '../resource-views/resource-views.service';
 import { Resource } from '../resources/entities/resource.entity';
 import { ResourcesService } from '../resources/resources.service';
 import { CreateScanDto } from './dto/create-scan.dto';
 import { UpdateScanDto } from './dto/update-scan.dto';
 import { Scan } from './entities/scan.entity';
+
+interface CommonResourceType {
+  name: string;
+  json: Record<string, any>;
+}
 
 @Injectable()
 export class ScansService {
@@ -19,6 +25,10 @@ export class ScansService {
     private readonly scansRepository: Repository<Scan>,
     @InjectAwsService(ResourceExplorer2)
     private readonly resourceExplorer: ResourceExplorer2,
+    @InjectAwsService(ElastiCache)
+    private readonly ec: ElastiCache,
+    @InjectAwsService(ElasticBeanstalk)
+    private readonly ebs: ElasticBeanstalk,
     private readonly resourceViewsService: ResourceViewsService,
     private readonly providerService: ProvidersService,
     private readonly resourcesService: ResourcesService,
@@ -32,16 +42,20 @@ export class ScansService {
     this.resourceExplorer.config.region = credentials.region;
   }
 
-  async create(createScanDto: CreateScanDto) {
-    const provider = await this.providerService.findOne(
-      createScanDto.providerId,
-    );
-    const resourceView = await this.resourceViewsService.findOne(
-      createScanDto.resourceViewId,
-    );
-
-    // this.setupCredentialsForResourceExplorer(provider.credentials);
-
+  private async listElasticCache(): Promise<CommonResourceType[]> {
+    const { CacheClusters } = await this.ec.describeCacheClusters().promise();
+    return CacheClusters.map((cacheCluster) => ({
+      name: cacheCluster.ARN,
+      json: cacheCluster,
+    }));
+  }
+  private async listElasticBeanstalk(): Promise<CommonResourceType[]> {
+    const { Applications } = await this.ebs.describeApplications().promise();
+    return Applications.map((app) => ({ name: app.ApplicationArn, json: app }));
+  }
+  private async listResourcesExplorer(
+    resourceView: ResourceView,
+  ): Promise<CommonResourceType[]> {
     const params: ResourceExplorer2.SearchInput = {
       QueryString: '*',
       MaxResults: 50,
@@ -56,14 +70,35 @@ export class ScansService {
       response = await this.resourceExplorer.search(params).promise();
       resources.push(...response.Resources);
     }
+    return resources.map((resource) => ({
+      name: resource.Arn,
+      json: resource,
+    }));
+  }
+
+  async create(createScanDto: CreateScanDto) {
+    const provider = await this.providerService.findOne(
+      createScanDto.providerId,
+    );
+    const resourceView = await this.resourceViewsService.findOne(
+      createScanDto.resourceViewId,
+    );
+
+    this.setupCredentialsForResourceExplorer(provider.credentials);
+
+    const resources: CommonResourceType[] = [];
+    resources.push(...(await this.listResourcesExplorer(resourceView)));
+    resources.push(...(await this.listElasticBeanstalk()));
+    resources.push(...(await this.listElasticCache()));
+
+    console.log('LENGTH :: ' + resources.length);
 
     const storedResources: Resource[] = [];
     for (const resource of resources) {
       const storedResource = await this.resourcesService.create({
-        name: resource.Arn,
+        name: resource.name,
         organizationId: provider.organization.id,
-        resourceViewId: resourceView.id,
-        scanContent: resource,
+        scanContent: resource.json,
         providerId: provider.id,
       });
       storedResources.push(storedResource);
@@ -75,19 +110,18 @@ export class ScansService {
     newScan.resourceView = resourceView;
     newScan.resources = storedResources;
 
-    await this.resourceViewsService.update(resourceView.id, {
-      resources: storedResources.map((res) => res.id),
-    });
-
     return this.scansRepository.save(newScan);
   }
 
   findAll() {
-    return `This action returns all scans`;
+    return this.scansRepository.find();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} scan`;
+    return this.scansRepository.findOne({
+      where: { id },
+      relations: ['provider', 'resourceView', 'resources'],
+    });
   }
 
   update(id: number, updateScanDto: UpdateScanDto) {

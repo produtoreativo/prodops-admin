@@ -32,7 +32,7 @@ export class ResourceViewsService {
       createResourceViewDto.providerId,
     );
 
-    // this.setupCredentialsForResourceExplorer(provider.credentials);
+    this.setupCredentialsForResourceExplorer(provider.credentials);
 
     const params: ResourceExplorer2.CreateViewInput = {
       ViewName: createResourceViewDto.name,
@@ -55,7 +55,7 @@ export class ResourceViewsService {
   async findOne(id: number) {
     const resourceView = await this.resourceViewRepository.findOne({
       where: { id },
-      relations: ['provider', 'resources', 'scans'],
+      relations: ['provider', 'scans'],
     });
     if (!resourceView) {
       throw new NotFoundException();
@@ -65,17 +65,14 @@ export class ResourceViewsService {
   }
 
   async update(id: number, updateResourceViewDto: UpdateResourceViewDto) {
-    const { resources, ...others } = updateResourceViewDto;
-    let resourceView = await this.findOne(id);
-    resourceView = { ...resourceView, ...others };
-    if (resources) {
-      const newResources = new Set(resourceView.resources.map((res) => res.id));
-      resources.forEach((res) => newResources.add(res));
-      const newResourcesArray = [];
-      for (const id of newResources.values()) {
-        newResourcesArray.push({ id });
-      }
-      resourceView.resources = newResourcesArray;
+    const { providerId, ...others } = updateResourceViewDto;
+    const resourceView = await this.resourceViewRepository.preload({
+      id,
+      provider: { id: providerId },
+      ...others,
+    });
+    if (!resourceView) {
+      throw new NotFoundException();
     }
     return this.resourceViewRepository.save(resourceView);
   }

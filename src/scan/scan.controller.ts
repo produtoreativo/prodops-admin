@@ -8,9 +8,28 @@ import ViewDto from './view.dto';
 export class ScanController {
   constructor(private readonly scanService: ScanService) {}
 
-  @Get(':bucket')
+  @Get('buckets')
+  list() {
+    return this.scanService.listBuckets();
+  }
+  @Get('buckets/:bucket')
   search(@Param('bucket') bucket: string) {
     return this.scanService.listBucketContents(bucket);
+  }
+
+  @Get('sayhello')
+  sayhello() {
+    return 'hello';
+  }
+
+  @Get('elastic-cache')
+  listElasticCache() {
+    return this.scanService.listElasticCache();
+  }
+
+  @Get('elastic-beanstalk')
+  listElasticBeanstalk() {
+    return this.scanService.listElasticBeanstalk();
   }
 
   @Get()

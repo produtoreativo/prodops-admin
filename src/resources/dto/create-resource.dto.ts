@@ -19,9 +19,4 @@ export class CreateResourceDto {
   @IsNotEmpty()
   @IsInt()
   providerId: number;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsInt()
-  resourceViewId: number;
 }
