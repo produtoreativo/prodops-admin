@@ -84,7 +84,7 @@ export class ScansService {
       createScanDto.resourceViewId,
     );
 
-    // this.setupCredentialsForResourceExplorer(provider.credentials);
+    this.setupCredentialsForResourceExplorer(provider.credentials);
 
     const resources: CommonResourceType[] = [];
     resources.push(...(await this.listResourcesExplorer(resourceView)));

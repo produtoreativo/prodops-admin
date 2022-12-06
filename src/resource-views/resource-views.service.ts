@@ -32,7 +32,7 @@ export class ResourceViewsService {
       createResourceViewDto.providerId,
     );
 
-    // this.setupCredentialsForResourceExplorer(provider.credentials);
+    this.setupCredentialsForResourceExplorer(provider.credentials);
 
     const params: ResourceExplorer2.CreateViewInput = {
       ViewName: createResourceViewDto.name,
