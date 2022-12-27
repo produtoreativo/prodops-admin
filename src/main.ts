@@ -8,6 +8,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { WinstonModule } from 'nest-winston';
 import * as winston from 'winston';
+import * as cookieParser from 'cookie-parser';
 
 // import otelSDK from './opentelemetry/tracing2';
 
@@ -31,10 +32,12 @@ async function bootstrap() {
         .setTitle('ProdOps Admin')
         .setDescription('ProdOps Admin API')
         .setVersion('1.0')
+        .addBearerAuth()
         .build(),
     ),
   );
   app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }));
+  app.use(cookieParser());
   await app.listen(configService.get('PORT') || 3000);
   // });
 }
