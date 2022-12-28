@@ -8,30 +8,43 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  UseGuards,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { OrganizationsService } from './organizations.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import {
+  ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAccessTokenAuthGuard } from '../auth/guard/jwt-access.guard';
+import { GetUser } from '../auth/get-user.decorator';
+import { UserEntity } from '../users/user.entity';
 
-@Controller('organizations')
 @ApiTags('Organizations')
+@ApiBearerAuth()
+@UseGuards(JwtAccessTokenAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('organizations')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Post()
-  create(@Body() createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationsService.create(createOrganizationDto);
+  create(
+    @GetUser() user: UserEntity,
+    @Body() createOrganizationDto: CreateOrganizationDto,
+  ) {
+    return this.organizationsService.create(user, createOrganizationDto);
   }
 
   @Get()
-  findAll() {
-    return this.organizationsService.findAll();
+  findAll(@GetUser() user: UserEntity) {
+    return this.organizationsService.findAll(user);
   }
 
   @ApiOkResponse({ status: 200, description: 'Organization found' })

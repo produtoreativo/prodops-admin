@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { UserEntity } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
 import { CreateOrganizationDto } from './dto/create-organization.dto';
 import { UpdateOrganizationDto } from './dto/update-organization.dto';
 import { Organization } from './entities/organization.entity';
@@ -10,16 +12,19 @@ export class OrganizationsService {
   constructor(
     @InjectRepository(Organization)
     private readonly organizationRepository: Repository<Organization>,
+    private readonly usersService: UsersService,
   ) {}
 
-  async create(createOrganizationDto: CreateOrganizationDto) {
-    return this.organizationRepository.save(
-      this.organizationRepository.create(createOrganizationDto),
-    );
+  async create(user: UserEntity, createOrganizationDto: CreateOrganizationDto) {
+    const newOrg = new Organization();
+    newOrg.name = createOrganizationDto.name;
+    newOrg.owner = user;
+    newOrg.members = [user];
+    return this.organizationRepository.save(newOrg);
   }
 
-  async findAll() {
-    return this.organizationRepository.find();
+  async findAll(user: UserEntity) {
+    return this.usersService.listOrganizationsOfUser(user.id);
   }
 
   async findOne(id: number) {

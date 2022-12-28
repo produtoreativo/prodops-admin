@@ -5,10 +5,12 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { TokenEntity } from '../auth/token.entity';
+import { Organization } from '../organizations/entities/organization.entity';
 
 @Entity({ name: 'users' })
 export class UserEntity {
@@ -25,8 +27,13 @@ export class UserEntity {
   })
   @Exclude()
   password: string;
+
   @OneToMany(() => TokenEntity, (token) => token.user)
   tokens: TokenEntity[];
+  @ManyToOne(() => Organization, (organization) => organization.members)
+  organization: Organization;
+  @OneToMany(() => Organization, (organization) => organization.owner)
+  organizations: Organization[];
   @BeforeInsert()
   @BeforeUpdate()
   async hashPassword() {

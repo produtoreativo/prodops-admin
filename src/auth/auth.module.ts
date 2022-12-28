@@ -8,12 +8,14 @@ import { JwtModule } from '@nestjs/jwt';
 import { UserEntity } from '../users/user.entity';
 import { LocalStrategy } from './strategy/local.strategy';
 import { JwtAccessTokenStrategy } from './strategy/jwt-access-token.strategy';
+import { UserModule } from '../users/users.module';
 
 @Module({
   imports: [
     PassportModule,
     JwtModule.register({}),
-    TypeOrmModule.forFeature([UserEntity, TokenEntity]),
+    TypeOrmModule.forFeature([TokenEntity]),
+    UserModule,
   ],
   providers: [AuthService, JwtAccessTokenStrategy, LocalStrategy],
   controllers: [AuthController],

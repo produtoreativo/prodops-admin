@@ -15,23 +15,21 @@ import { Repository } from 'typeorm';
 import { UserEntity } from '../users/user.entity';
 import { TokenEntity, TokenType } from './token.entity';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly configService: ConfigService,
     private readonly jwtService: JwtService,
-    @InjectRepository(UserEntity)
-    private readonly usersRepository: Repository<UserEntity>,
+    private readonly usersService: UsersService,
     @InjectRepository(TokenEntity)
     private readonly tokenRepository: Repository<TokenEntity>,
   ) {}
 
   public async register(registerUserDto: RegisterUserDto): Promise<UserEntity> {
     try {
-      return this.usersRepository.save(
-        this.usersRepository.create(registerUserDto),
-      );
+      return this.usersService.createOne(registerUserDto);
     } catch (error) {
       throw new HttpException(
         'Something went wrong',
@@ -116,7 +114,7 @@ export class AuthService {
     plainTextPassword: string,
   ) {
     try {
-      const user = await this.usersRepository.findOne({ where: { email } });
+      const user = await this.usersService.findByEmail(email);
       await this.verifyPassword(plainTextPassword, user.password);
       return user;
     } catch (error) {
@@ -140,10 +138,6 @@ export class AuthService {
   }
 
   async getUserById(userId: number) {
-    const user = await this.usersRepository.findOne(userId);
-    if (!user) {
-      throw new NotFoundException();
-    }
-    return user;
+    return this.usersService.findById(userId);
   }
 }
