@@ -1,21 +1,21 @@
 import {
+  ConflictException,
   HttpException,
   HttpStatus,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as crypto from 'crypto';
 import * as bcrypt from 'bcrypt';
+import * as crypto from 'crypto';
 import { addDays, isAfter } from 'date-fns';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../users/user.entity';
-import { TokenEntity, TokenType } from './token.entity';
-import { RegisterUserDto } from './dto/register-user.dto';
 import { UsersService } from '../users/users.service';
+import { RegisterUserDto } from './dto/register-user.dto';
+import { TokenEntity, TokenType } from './token.entity';
 
 @Injectable()
 export class AuthService {
@@ -29,6 +29,10 @@ export class AuthService {
 
   public async register(registerUserDto: RegisterUserDto): Promise<UserEntity> {
     try {
+      const user = await this.usersService.findByEmail(registerUserDto.email);
+      if (user) {
+        throw new ConflictException();
+      }
       return this.usersService.createOne(registerUserDto);
     } catch (error) {
       throw new HttpException(
