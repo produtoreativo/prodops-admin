@@ -6,13 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ResourceViewsService } from './resource-views.service';
 import { CreateResourceViewDto } from './dto/create-resource-view.dto';
 import { UpdateResourceViewDto } from './dto/update-resource-view.dto';
-import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { JwtAccessTokenAuthGuard } from '../auth/guard/jwt-access.guard';
+import { GetUser } from '../auth/get-user.decorator';
+import { UserEntity } from '../users/user.entity';
 
 @ApiTags('ResourceViews')
+@ApiBearerAuth()
+@UseGuards(JwtAccessTokenAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('resource-views')
 export class ResourceViewsController {
   constructor(private readonly resourceViewsService: ResourceViewsService) {}
@@ -23,8 +32,8 @@ export class ResourceViewsController {
   }
 
   @Get()
-  findAll() {
-    return this.resourceViewsService.findAll();
+  findAll(@GetUser() user: UserEntity) {
+    return this.resourceViewsService.findAll(user);
   }
 
   @ApiExcludeEndpoint()

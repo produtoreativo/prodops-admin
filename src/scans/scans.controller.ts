@@ -6,13 +6,22 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { ScansService } from './scans.service';
 import { CreateScanDto } from './dto/create-scan.dto';
 import { UpdateScanDto } from './dto/update-scan.dto';
-import { ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiExcludeEndpoint, ApiTags } from '@nestjs/swagger';
+import { JwtAccessTokenAuthGuard } from '../auth/guard/jwt-access.guard';
+import { UserEntity } from '../users/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
 
 @ApiTags('Scans')
+@ApiBearerAuth()
+@UseGuards(JwtAccessTokenAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('scans')
 export class ScansController {
   constructor(private readonly scansService: ScansService) {}
@@ -23,8 +32,8 @@ export class ScansController {
   }
 
   @Get()
-  findAll() {
-    return this.scansService.findAll();
+  findAll(@GetUser() user: UserEntity) {
+    return this.scansService.findAll(user);
   }
 
   @Get(':id')

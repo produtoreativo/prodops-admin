@@ -8,19 +8,29 @@ import {
   Delete,
   HttpStatus,
   HttpCode,
+  UseGuards,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ProvidersService } from './providers.service';
 import { CreateProviderDto } from './dto/create-provider.dto';
 import { UpdateProviderDto } from './dto/update-provider.dto';
 import {
+  ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAccessTokenAuthGuard } from '../auth/guard/jwt-access.guard';
+import { UserEntity } from '../users/user.entity';
+import { GetUser } from '../auth/get-user.decorator';
 
-@Controller('providers')
 @ApiTags('Providers')
+@ApiBearerAuth()
+@UseGuards(JwtAccessTokenAuthGuard)
+@UseInterceptors(ClassSerializerInterceptor)
+@Controller('providers')
 export class ProvidersController {
   constructor(private readonly providersService: ProvidersService) {}
 
@@ -30,8 +40,8 @@ export class ProvidersController {
   }
 
   @Get()
-  findAll() {
-    return this.providersService.findAll();
+  findAll(@GetUser() user: UserEntity) {
+    return this.providersService.findAll(user);
   }
 
   @ApiOkResponse({ status: 200, description: 'Provider found' })

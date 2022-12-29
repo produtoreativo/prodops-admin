@@ -27,8 +27,15 @@ export class OrganizationsService {
     return this.usersService.listOrganizationsOfUser(user.id);
   }
 
+  async listProvidersOfOrganization(organizationId: number) {
+    const { providers } = await this.findOne(organizationId);
+    return providers;
+  }
+
   async findOne(id: number) {
-    const organization = await this.organizationRepository.findOne({ id });
+    const organization = await this.organizationRepository.findOne(id, {
+      relations: ['providers'],
+    });
     if (!organization) {
       throw new NotFoundException();
     }

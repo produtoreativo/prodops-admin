@@ -3,12 +3,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ElastiCache, ElasticBeanstalk, ResourceExplorer2 } from 'aws-sdk';
 import { InjectAwsService } from 'nest-aws-sdk';
 import { Repository } from 'typeorm';
+import { OrganizationsService } from '../organizations/organizations.service';
 import { Credentials } from '../providers/credentials.type';
 import { ProvidersService } from '../providers/providers.service';
 import { ResourceView } from '../resource-views/entities/resource-view.entity';
 import { ResourceViewsService } from '../resource-views/resource-views.service';
 import { Resource } from '../resources/entities/resource.entity';
 import { ResourcesService } from '../resources/resources.service';
+import { UserEntity } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
 import { CreateScanDto } from './dto/create-scan.dto';
 import { UpdateScanDto } from './dto/update-scan.dto';
 import { Scan } from './entities/scan.entity';
@@ -32,6 +35,8 @@ export class ScansService {
     private readonly resourceViewsService: ResourceViewsService,
     private readonly providerService: ProvidersService,
     private readonly resourcesService: ResourcesService,
+    private readonly usersService: UsersService,
+    private readonly organizationsService: OrganizationsService,
   ) {}
 
   private setupCredentialsForResourceExplorer(credentials: Credentials) {
@@ -113,8 +118,35 @@ export class ScansService {
     return this.scansRepository.save(newScan);
   }
 
-  findAll() {
-    return this.scansRepository.find();
+  async findAll(user: UserEntity) {
+    const organizations = await this.usersService.listOrganizationsOfUser(
+      user.id,
+    );
+    const providers = [];
+    for (const organization of organizations) {
+      providers.push(
+        ...(await this.organizationsService.listProvidersOfOrganization(
+          organization.id,
+        )),
+      );
+    }
+    const resourcesViews = [];
+    for (const provider of providers) {
+      resourcesViews.push(
+        ...(await this.providerService.listResourcesViewOfProvider(
+          provider.id,
+        )),
+      );
+    }
+    const scans = [];
+    for (const resourcesView of resourcesViews) {
+      scans.push(
+        ...(await this.resourceViewsService.listScansOfResourcesView(
+          resourcesView.id,
+        )),
+      );
+    }
+    return scans;
   }
 
   findOne(id: number) {
