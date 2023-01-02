@@ -12,6 +12,8 @@ import { OrganizationsModule } from './organizations/organizations.module';
 import { ResourceViewsModule } from './resource-views/resource-views.module';
 import { ScansModule } from './scans/scans.module';
 import { ResourcesModule } from './resources/resources.module';
+import { AuthModule } from './auth/auth.module';
+import { UserModule } from './users/users.module';
 
 // const OpenTelemetryModuleConfig = OpenTelemetryModule.forRoot({
 //   metrics: {
@@ -30,7 +32,7 @@ import { ResourcesModule } from './resources/resources.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     AwsSdkModule.forRootAsync({
       defaultServiceOptions: {
         useValue: {
@@ -58,6 +60,8 @@ import { ResourcesModule } from './resources/resources.module';
     ResourceViewsModule,
     ScansModule,
     ResourcesModule,
+    AuthModule,
+    UserModule,
   ],
 })
 export class AppModule {}

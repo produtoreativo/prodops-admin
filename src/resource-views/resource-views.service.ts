@@ -3,8 +3,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ResourceExplorer2 } from 'aws-sdk';
 import { InjectAwsService } from 'nest-aws-sdk';
 import { Repository } from 'typeorm';
+import { OrganizationsService } from '../organizations/organizations.service';
 import { Credentials } from '../providers/credentials.type';
 import { ProvidersService } from '../providers/providers.service';
+import { UserEntity } from '../users/user.entity';
+import { UsersService } from '../users/users.service';
 import { CreateResourceViewDto } from './dto/create-resource-view.dto';
 import { UpdateResourceViewDto } from './dto/update-resource-view.dto';
 import { ResourceView } from './entities/resource-view.entity';
@@ -17,6 +20,8 @@ export class ResourceViewsService {
     @InjectAwsService(ResourceExplorer2)
     private readonly resourceExplorer: ResourceExplorer2,
     private readonly providerService: ProvidersService,
+    private readonly usersService: UsersService,
+    private readonly organizationsService: OrganizationsService,
   ) {}
 
   private setupCredentialsForResourceExplorer(credentials: Credentials) {
@@ -48,8 +53,32 @@ export class ResourceViewsService {
     return this.resourceViewRepository.save(newResourceView);
   }
 
-  async findAll() {
-    return this.resourceViewRepository.find();
+  async findAll(user: UserEntity) {
+    const organizations = await this.usersService.listOrganizationsOfUser(
+      user.id,
+    );
+    const providers = [];
+    for (const organization of organizations) {
+      providers.push(
+        ...(await this.organizationsService.listProvidersOfOrganization(
+          organization.id,
+        )),
+      );
+    }
+    const resourceViews = [];
+    for (const provider of providers) {
+      resourceViews.push(
+        ...(await this.providerService.listResourcesViewOfProvider(
+          provider.id,
+        )),
+      );
+    }
+    return resourceViews;
+  }
+
+  async listScansOfResourcesView(resourcesViewId: number) {
+    const { scans } = await this.findOne(resourcesViewId);
+    return scans;
   }
 
   async findOne(id: number) {
