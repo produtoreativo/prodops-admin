@@ -1,14 +1,11 @@
 import {
   ConflictException,
-  HttpException,
-  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import * as bcrypt from 'bcrypt';
 import * as crypto from 'crypto';
 import { addDays, isAfter } from 'date-fns';
 import { Repository } from 'typeorm';
@@ -28,18 +25,11 @@ export class AuthService {
   ) {}
 
   public async register(registerUserDto: RegisterUserDto): Promise<UserEntity> {
-    try {
-      const user = await this.usersService.findByEmail(registerUserDto.email);
-      if (user) {
-        throw new ConflictException();
-      }
-      return this.usersService.createOne(registerUserDto);
-    } catch (error) {
-      throw new HttpException(
-        'Something went wrong',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+    const user = await this.usersService.findByEmail(registerUserDto.email);
+    if (user) {
+      throw new ConflictException();
     }
+    return this.usersService.createOne(registerUserDto);
   }
 
   async handleRefreshTokens(refreshToken: string) {
@@ -117,28 +107,7 @@ export class AuthService {
     email: string,
     plainTextPassword: string,
   ) {
-    try {
-      const user = await this.usersService.findByEmail(email);
-      await this.verifyPassword(plainTextPassword, user.password);
-      return user;
-    } catch (error) {
-      throw new HttpException(
-        'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
-  }
-  private async verifyPassword(
-    plainTextPassword: string,
-    hashedPassword: string,
-  ) {
-    const isPasswordMatching = await bcrypt.compare(
-      plainTextPassword,
-      hashedPassword,
-    );
-    if (!isPasswordMatching) {
-      throw new UnauthorizedException();
-    }
+    return this.usersService.validate(email, plainTextPassword);
   }
 
   async getUserById(userId: number) {

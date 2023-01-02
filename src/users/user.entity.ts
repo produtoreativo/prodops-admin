@@ -1,8 +1,5 @@
-import * as bcrypt from 'bcrypt';
 import { Exclude } from 'class-transformer';
 import {
-  BeforeInsert,
-  BeforeUpdate,
   Column,
   Entity,
   ManyToOne,
@@ -22,11 +19,16 @@ export class UserEntity {
     nullable: true,
   })
   name: string;
+  @Exclude()
   @Column({
     nullable: true,
   })
+  salt: string;
   @Exclude()
-  password: string;
+  @Column({
+    nullable: true,
+  })
+  key: string;
 
   @OneToMany(() => TokenEntity, (token) => token.user)
   tokens: TokenEntity[];
@@ -34,9 +36,4 @@ export class UserEntity {
   organization: Organization;
   @OneToMany(() => Organization, (organization) => organization.owner)
   organizations: Organization[];
-  @BeforeInsert()
-  @BeforeUpdate()
-  async hashPassword() {
-    this.password = await bcrypt.hash(this.password, 10);
-  }
 }
